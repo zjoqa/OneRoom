@@ -24,15 +24,17 @@ using UnityEngine.UI;
     [SerializeField] ParticleSystem ps_QuestionEffect; // 물음표 투사체
 
     [SerializeField] Image img_Interaction; // 상호작용 마름모 이미지
-    [SerializeField] Image img_InteractionEffect; // 상호작용 이펙트
+    [SerializeField] Image img_InteractionEffect; // 상호작용 마름모 이펙트
 
     DialogueManager theDM; // 대화창 매니저
 
-    public void HideUI() // 대화창 활성화 중일 때 UI 숨김
+    public void SettingUI(bool p_flag)
     {
-        go_Crosshair.SetActive(false);
-        go_Cursor.SetActive(false);
-        go_TargetNameBar.SetActive(false);
+        go_Crosshair.SetActive(p_flag);
+        go_Cursor.SetActive(p_flag);
+        go_TargetNameBar.SetActive(p_flag);
+
+        isInteract = !p_flag;
     }
 
     void Start()
@@ -51,6 +53,7 @@ using UnityEngine.UI;
 
     private void CheckObject()
     {
+        // 마우스 위치를 3D 좌표로 변환
         Vector3 t_MousePos = new Vector3(Input.mousePosition.x , Input.mousePosition.y , 0);
 
         if(Physics.Raycast(cam.ScreenPointToRay(t_MousePos), out hitInfo , 100)) // 마우스 포지션에서 Ray를 쏴서 충돌하면
@@ -145,6 +148,7 @@ using UnityEngine.UI;
         }
     }
 
+    
 
     private void ClickLeftBtn()
     {
@@ -158,7 +162,6 @@ using UnityEngine.UI;
                     }
                 }
         }
-
     }
     private void Interact() // 상호작용 실행
     {
@@ -184,7 +187,8 @@ using UnityEngine.UI;
         yield return new WaitUntil(()=> QuestionEffect.isCollide);
         QuestionEffect.isCollide = false; // 충돌 여부 초기화
 
-        theDM.ShowDialogue();
+
+        theDM.ShowDialogue(hitInfo.transform.GetComponent<InteractionEvent>().GetDialogue());
     }
 }
 
